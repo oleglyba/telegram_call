@@ -21,14 +21,12 @@ function ConnectTelegram() {
     const handleSendCode = async (e) => {
         e.preventDefault();
         const phoneNumber = parsePhoneNumberFromString(phone);
-
         if (phone.trim() === "+") {
             setErrorPhone("Please enter your phone number.");
             setPhoneColor("red");
             setHasError(true);
             return;
         }
-
         if (
             !phoneNumber ||
             !phoneNumber.number ||
@@ -39,28 +37,23 @@ function ConnectTelegram() {
             setHasError(true);
             return;
         }
-
         if (!termsAccepted) {
             setErrorPhone("You must accept the Terms and Conditions.");
             setPhoneColor("red");
             setHasError(true);
             return;
         }
-
         setErrorPhone("");
         setPhoneColor("green");
         setHasError(false);
         setIsLoading(true);
-
         try {
             const cleanedNumber = phoneNumber.number.replace("+", "");
             const url = `/session/get_code/${cleanedNumber}`;
-
             const response = await apiRequest(url, {
                 method: "POST",
                 data: { phone: phoneNumber.number },
             });
-
             const { username } = response;
             navigate("/confirm-telegram", {
                 state: {
@@ -99,10 +92,8 @@ function ConnectTelegram() {
             <div className="connect-telegram-card">
                 <h2>Connect your Telegram</h2>
                 <p>
-                    To proceed, you have to connect your Telegram account via SMS
-                    confirmation process.
+                    To proceed, you have to connect your Telegram account via SMS confirmation process.
                 </p>
-
                 <InputField
                     type="tel"
                     placeholder="Phone Number"
@@ -111,7 +102,6 @@ function ConnectTelegram() {
                     borderColor={phoneColor}
                     error={errorPhone}
                 />
-
                 <div className="terms-container">
                     <label className="terms-label">
                         <input
@@ -122,7 +112,6 @@ function ConnectTelegram() {
                         I agree to the Terms and Conditions
                     </label>
                 </div>
-
                 <button
                     className={`send-btn ${hasError ? "error-margin" : ""}`}
                     onClick={handleSendCode}
@@ -130,9 +119,7 @@ function ConnectTelegram() {
                 >
                     {isLoading ? "Sending..." : "Send code"}
                 </button>
-
                 {errorPhone && <p className="error-text">{errorPhone}</p>}
-
                 <div style={{ marginTop: "1rem" }}>
                     {validatedData ? (
                         <>
