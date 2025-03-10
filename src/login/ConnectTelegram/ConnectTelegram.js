@@ -1,5 +1,5 @@
 // ConnectTelegram.js
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useBackendApi } from "../../components/api/axiosBackendApi";
@@ -15,8 +15,21 @@ function ConnectTelegram() {
     const [hasError, setHasError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
-
     const { apiRequest } = useBackendApi();
+
+
+
+    useEffect(() => {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            console.log("Telegram WebApp Data:", window.Telegram.WebApp);
+            console.log("Telegram initData:", window.Telegram.WebApp.initData);
+            console.log("Telegram initDataUnsafe:", window.Telegram.WebApp.initDataUnsafe);
+        } else {
+            console.log("Telegram WebApp API not available. WebApp opened in a regular browser.");
+        }
+    }, [])
+
 
     const handleSendCode = async (e) => {
         e.preventDefault();
