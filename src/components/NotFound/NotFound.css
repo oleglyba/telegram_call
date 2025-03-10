@@ -1,0 +1,43 @@
+@import "../../style/common.css";
+
+.notfound-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    height: 100vh;
+    text-align: center;
+    background-color: #f8f8f8;
+}
+
+.notfound-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.notfound-container p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.home-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #529293;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.home-btn:hover {
+    background: #458C8D;
+}
+
+.home-btn:active {
+    background: #65ACAD;
+}

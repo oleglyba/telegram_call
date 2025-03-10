@@ -1,0 +1,29 @@
+/* common.css */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+
+.header-container-white-telegram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.loading-indicator,
+.loading-indicator-telegram {
+    width: 50px;
+    height: auto;
+    animation: spin 2s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

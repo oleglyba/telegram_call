@@ -1,0 +1,23 @@
+@import "../../style/common.css";
+
+.congrats-card {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 24rem;
+    padding: 2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.316);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.congrats-card h1 {
+    margin-bottom: 1rem;
+}
+
+.congrats-card p {
+    margin-bottom: 1.5rem;
+}
