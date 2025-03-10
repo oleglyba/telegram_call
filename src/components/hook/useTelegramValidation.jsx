@@ -14,30 +14,6 @@ function validateTelegramHash(initDataUnsafe) {
     return hmac === initDataUnsafe.hash;
 }
 
-function validateTelegramData(initDataUnsafe) {
-    if (!initDataUnsafe) {
-        return false;
-    }
-    const user = initDataUnsafe.user;
-    if (
-        !user ||
-        typeof user.id !== "number" ||
-        !user.first_name ||
-        (user.username && typeof user.username !== "string")
-    ) {
-        return false;
-    }
-    const authDate = parseInt(initDataUnsafe.auth_date, 10);
-    const now = Math.floor(Date.now() / 1000);
-    if (isNaN(authDate) || authDate <= 0 || now - authDate > 600) {
-        return false;
-    }
-    if (user.photo_url && !/^https?:\/\/t\.me\/i\/userpic/.test(user.photo_url)) {
-        return false;
-    }
-    return validateTelegramHash(initDataUnsafe);
-}
-
 function parseTelegramData() {
     if (!window.Telegram?.WebApp) {
         return null;
@@ -82,11 +58,46 @@ export default function useTelegramValidation() {
         }
         window.Telegram.WebApp.ready();
         const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
-        if (validateTelegramData(initDataUnsafe)) {
-            setValidatedData(parseTelegramData());
-        } else {
-            setError("Invalid Telegram data.");
+        if (!initDataUnsafe) {
+            setError("No Telegram WebApp data found.");
+            return;
         }
+        const user = initDataUnsafe.user;
+        if (!user) {
+            setError("No user data found.");
+            return;
+        }
+        if (typeof user.id !== "number") {
+            setError("User ID is not a number.");
+            return;
+        }
+        if (!user.first_name) {
+            setError("User first name is missing.");
+            return;
+        }
+        if (user.username && typeof user.username !== "string") {
+            setError("User username is invalid.");
+            return;
+        }
+        const authDate = parseInt(initDataUnsafe.auth_date, 10);
+        const now = Math.floor(Date.now() / 1000);
+        if (isNaN(authDate) || authDate <= 0) {
+            setError("Invalid authentication date.");
+            return;
+        }
+        if (now - authDate > 600) {
+            setError("Authentication data is too old.");
+            return;
+        }
+        if (user.photo_url && !/^https?:\/\/t\.me\/i\/userpic/.test(user.photo_url)) {
+            setError("Invalid photo URL.");
+            return;
+        }
+        if (!validateTelegramHash(initDataUnsafe)) {
+            setError("Invalid signature. Data might be tampered with.");
+            return;
+        }
+        setValidatedData(parseTelegramData());
     }, []);
 
     return { validatedData, error };
