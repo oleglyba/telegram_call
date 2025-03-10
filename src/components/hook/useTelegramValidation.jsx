@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
-import crypto from "crypto";
+import CryptoJS from "crypto-js";
 
 const BOT_TOKEN = process.env.REACT_APP_BOT_TOKEN;
 
 function validateTelegramHash(initDataUnsafe) {
-    const secretKey = crypto.createHash("sha256").update(BOT_TOKEN).digest();
+    const secretKey = CryptoJS.SHA256(BOT_TOKEN).toString();
     const dataCheckString = Object.keys(initDataUnsafe)
         .filter((key) => key !== "hash")
         .sort()
         .map((key) => `${key}=${JSON.stringify(initDataUnsafe[key])}`)
         .join("\n");
-    const hmac = crypto
-        .createHmac("sha256", secretKey)
-        .update(dataCheckString)
-        .digest("hex");
+    const hmac = CryptoJS.HmacSHA256(dataCheckString, secretKey).toString();
     return hmac === initDataUnsafe.hash;
 }
 
@@ -39,7 +36,6 @@ function validateTelegramData(initDataUnsafe) {
         return false;
     }
     return validateTelegramHash(initDataUnsafe);
-
 }
 
 function parseTelegramData() {
