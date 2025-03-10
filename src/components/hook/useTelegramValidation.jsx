@@ -3,25 +3,38 @@ import CryptoJS from "crypto-js";
 
 const BOT_TOKEN = process.env.REACT_APP_BOT_TOKEN;
 
-function validateTelegramHash(initDataUnsafe) {
-    const secretKey = CryptoJS.SHA256(BOT_TOKEN).toString();
-    const dataCheckString = Object.keys(initDataUnsafe)
+
+function validateTelegramHash() {
+    if (!window?.Telegram?.WebApp || !window.Telegram.Utils) {
+        return false;
+    }
+
+    const parsedData = window.Telegram.Utils.urlParseQueryString(
+        window.Telegram.WebApp.initData
+    );
+    const hash = parsedData.hash;
+
+    const dataKeys = Object.keys(parsedData)
         .filter((key) => key !== "hash")
-        .sort()
-        .map((key) => `${key}=${JSON.stringify(initDataUnsafe[key])}`)
+        .sort();
+    const dataCheckString = dataKeys
+        .map((key) => `${key}=${parsedData[key]}`)
         .join("\n");
-    const hmac = CryptoJS.HmacSHA256(dataCheckString, secretKey).toString();
-    return hmac === initDataUnsafe.hash;
+
+    const secretKey = CryptoJS.SHA256(BOT_TOKEN).toString();
+    const computedHash = CryptoJS.HmacSHA256(
+        dataCheckString,
+        secretKey
+    ).toString(CryptoJS.enc.Hex);
+
+    return computedHash === hash;
 }
 
 function parseTelegramData() {
-    if (!window.Telegram?.WebApp) {
-        return null;
-    }
+    if (!window?.Telegram?.WebApp) return null;
     const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
-    if (!initDataUnsafe) {
-        return null;
-    }
+    if (!initDataUnsafe) return null;
+
     return {
         queryId: initDataUnsafe.query_id ?? null,
         user: initDataUnsafe.user
@@ -52,16 +65,18 @@ export default function useTelegramValidation() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!window.Telegram?.WebApp) {
+        if (!window?.Telegram?.WebApp) {
             setError("Telegram WebApp API not available.");
             return;
         }
         window.Telegram.WebApp.ready();
+
         const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
         if (!initDataUnsafe) {
             setError("No Telegram WebApp data found.");
             return;
         }
+
         const user = initDataUnsafe.user;
         if (!user) {
             setError("No user data found.");
@@ -79,6 +94,7 @@ export default function useTelegramValidation() {
             setError("User username is invalid.");
             return;
         }
+
         const authDate = parseInt(initDataUnsafe.auth_date, 10);
         const now = Math.floor(Date.now() / 1000);
         if (isNaN(authDate) || authDate <= 0) {
@@ -93,10 +109,12 @@ export default function useTelegramValidation() {
             setError("Invalid photo URL.");
             return;
         }
-        if (!validateTelegramHash(initDataUnsafe)) {
+
+        if (!validateTelegramHash()) {
             setError("Invalid signature. Data might be tampered with.");
             return;
         }
+
         setValidatedData(parseTelegramData());
     }, []);
 
