@@ -1,6 +1,45 @@
 import { useEffect, useState } from "react";
 
 
+const BOT_TOKEN = process.env.REACT_APP_BOT_TOKEN;
+
+async function validateTelegramHashAsync(data, botToken) {
+    const encoder = new TextEncoder();
+    const checkString = Object.keys(data)
+        .filter((key) => key !== "hash")
+        .sort()
+        .map((key) => `${key}=${data[key]}`)
+        .join("\n");
+
+    const baseKey = await crypto.subtle.importKey(
+        "raw",
+        encoder.encode("WebAppData"),
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"]
+    );
+    const secretBuffer = await crypto.subtle.sign(
+        "HMAC",
+        baseKey,
+        encoder.encode(botToken)
+    );
+    const secretKey = await crypto.subtle.importKey(
+        "raw",
+        secretBuffer,
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"]
+    );
+    const signatureBuffer = await crypto.subtle.sign(
+        "HMAC",
+        secretKey,
+        encoder.encode(checkString)
+    );
+    const computedHash = [...new Uint8Array(signatureBuffer)]
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    return data.hash === computedHash;
+}
 
 function parseTelegramData() {
     if (!window.Telegram?.WebApp) return null;
@@ -36,16 +75,18 @@ export default function useTelegramValidation() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!window?.Telegram?.WebApp) {
+        if (!window.Telegram?.WebApp) {
             setError("Telegram WebApp API not available.");
             return;
         }
         window.Telegram.WebApp.ready();
+
         const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
         if (!initDataUnsafe) {
             setError("No Telegram WebApp data found.");
             return;
         }
+
         const user = initDataUnsafe.user;
         if (!user) {
             setError("No user data found.");
@@ -77,7 +118,18 @@ export default function useTelegramValidation() {
             setError("Invalid photo URL.");
             return;
         }
-        setValidatedData(parseTelegramData());
+
+        const initDataString = window.Telegram.WebApp.initData;
+        const dataObj = Object.fromEntries(new URLSearchParams(initDataString));
+
+        (async () => {
+            const isValid = await validateTelegramHashAsync(dataObj, BOT_TOKEN);
+            if (!isValid) {
+                setError("Invalid signature. Data might be tampered with.");
+                return;
+            }
+            setValidatedData(parseTelegramData());
+        })();
     }, []);
 
     return { validatedData, error };
