@@ -1,4 +1,3 @@
-// ConnectTelegram.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
@@ -6,6 +5,7 @@ import { useBackendApi } from "../../components/api/axiosBackendApi";
 import InputField from "../../components/InputField/InputField";
 import "./ConnectTelegram.css";
 import "../../style/common.css";
+import useTelegramValidation from "../../components/hook/useTelegramValidation";
 
 function ConnectTelegram() {
     const navigate = useNavigate();
@@ -16,17 +16,7 @@ function ConnectTelegram() {
     const [isLoading, setIsLoading] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
-
-    let telegramData;
-    let initData;
-    let initDataUnsafe;
-
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        telegramData = window.Telegram.WebApp;
-        initData = window.Telegram.WebApp.initData;
-        initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
-    }
+    const { validatedData, error: telegramError } = useTelegramValidation();
 
     const handleSendCode = async (e) => {
         e.preventDefault();
@@ -108,7 +98,10 @@ function ConnectTelegram() {
         <div className="form-container">
             <div className="connect-telegram-card">
                 <h2>Connect your Telegram</h2>
-                <p>To proceed, you have to connect your Telegram account via SMS confirmation process.</p>
+                <p>
+                    To proceed, you have to connect your Telegram account via SMS
+                    confirmation process.
+                </p>
 
                 <InputField
                     type="tel"
@@ -141,23 +134,15 @@ function ConnectTelegram() {
                 {errorPhone && <p className="error-text">{errorPhone}</p>}
 
                 <div style={{ marginTop: "1rem" }}>
-                    {telegramData ? (
+                    {validatedData ? (
                         <>
                             <p>
-                                <strong>Telegram WebApp Data:</strong>{" "}
-                                {telegramData ? JSON.stringify(telegramData) : "no data"}
+                                <strong>Validated Telegram Data:</strong>
                             </p>
-                            <p>
-                                <strong>initData:</strong>{" "}
-                                {initData ? initData : "no data"}
-                            </p>
-                            <p>
-                                <strong>initDataUnsafe:</strong>{" "}
-                                {initDataUnsafe ? JSON.stringify(initDataUnsafe) : "no data"}
-                            </p>
+                            <pre>{JSON.stringify(validatedData, null, 2)}</pre>
                         </>
                     ) : (
-                        <p>Telegram WebApp API not available. WebApp opened in a regular browser.</p>
+                        <p>Error: {telegramError}</p>
                     )}
                 </div>
             </div>
