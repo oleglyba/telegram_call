@@ -21,6 +21,7 @@ function ConnectTelegram() {
     const handleSendCode = async (e) => {
         e.preventDefault();
         const phoneNumber = parsePhoneNumberFromString(phone);
+
         if (phone.trim() === "+") {
             setErrorPhone("Please enter your phone number.");
             setPhoneColor("red");
