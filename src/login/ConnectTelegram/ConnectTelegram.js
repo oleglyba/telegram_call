@@ -1,5 +1,5 @@
 // ConnectTelegram.js
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useBackendApi } from "../../components/api/axiosBackendApi";
@@ -17,19 +17,16 @@ function ConnectTelegram() {
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
 
+    let telegramData;
+    let initData;
+    let initDataUnsafe;
 
-
-    useEffect(() => {
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            console.log("Telegram WebApp Data:", window.Telegram.WebApp);
-            console.log("Telegram initData:", window.Telegram.WebApp.initData);
-            console.log("Telegram initDataUnsafe:", window.Telegram.WebApp.initDataUnsafe);
-        } else {
-            console.log("Telegram WebApp API not available. WebApp opened in a regular browser.");
-        }
-    }, [])
-
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        telegramData = window.Telegram.WebApp;
+        initData = window.Telegram.WebApp.initData;
+        initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
+    }
 
     const handleSendCode = async (e) => {
         e.preventDefault();
@@ -42,7 +39,11 @@ function ConnectTelegram() {
             return;
         }
 
-        if (!phoneNumber || !phoneNumber.number || (!phone.startsWith("+888") && !phoneNumber.isValid())) {
+        if (
+            !phoneNumber ||
+            !phoneNumber.number ||
+            (!phone.startsWith("+888") && !phoneNumber.isValid())
+        ) {
             setErrorPhone("Please enter a valid phone number.");
             setPhoneColor("red");
             setHasError(true);
@@ -67,16 +68,15 @@ function ConnectTelegram() {
 
             const response = await apiRequest(url, {
                 method: "POST",
-                data: { phone: phoneNumber.number }
+                data: { phone: phoneNumber.number },
             });
 
             const { username } = response;
-
             navigate("/confirm-telegram", {
                 state: {
                     phone: phoneNumber.number.replace("+", ""),
-                    username
-                }
+                    username,
+                },
             });
         } catch (error) {
             setErrorPhone(`Error: ${error.message}`);
@@ -139,6 +139,27 @@ function ConnectTelegram() {
                 </button>
 
                 {errorPhone && <p className="error-text">{errorPhone}</p>}
+
+                <div style={{ marginTop: "1rem" }}>
+                    {telegramData ? (
+                        <>
+                            <p>
+                                <strong>Telegram WebApp Data:</strong>{" "}
+                                {telegramData ? JSON.stringify(telegramData) : "no data"}
+                            </p>
+                            <p>
+                                <strong>initData:</strong>{" "}
+                                {initData ? initData : "no data"}
+                            </p>
+                            <p>
+                                <strong>initDataUnsafe:</strong>{" "}
+                                {initDataUnsafe ? JSON.stringify(initDataUnsafe) : "no data"}
+                            </p>
+                        </>
+                    ) : (
+                        <p>Telegram WebApp API not available. WebApp opened in a regular browser.</p>
+                    )}
+                </div>
             </div>
         </div>
     );
