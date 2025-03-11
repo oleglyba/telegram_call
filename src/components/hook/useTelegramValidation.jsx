@@ -119,6 +119,11 @@ export default function useTelegramValidation() {
             return;
         }
 
+        if (!initDataUnsafe.hash || typeof initDataUnsafe.hash !== "string") {
+            setError("Missing or invalid hash.");
+            return;
+        }
+
         const initDataString = window.Telegram.WebApp.initData;
         const dataObj = Object.fromEntries(new URLSearchParams(initDataString));
 
