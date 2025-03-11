@@ -1,5 +1,5 @@
 // ConnectTelegram.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useBackendApi } from "../../components/api/axiosBackendApi";
@@ -17,12 +17,17 @@ function ConnectTelegram() {
     const [isLoading, setIsLoading] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
-    const { validatedData, error: telegramError, isHashValid } = useTelegramValidation();
+    const { isHashValid } = useTelegramValidation();
+
+    useEffect(() => {
+        if (!isHashValid) {
+            navigate("/notValid");
+        }
+    }, [isHashValid, navigate]);
 
     const handleSendCode = async (e) => {
         e.preventDefault();
         const phoneNumber = parsePhoneNumberFromString(phone);
-
         if (phone.trim() === "+") {
             setErrorPhone("Please enter your phone number.");
             setPhoneColor("red");
@@ -122,21 +127,6 @@ function ConnectTelegram() {
                     {isLoading ? "Sending..." : "Send code"}
                 </button>
                 {errorPhone && <p className="error-text">{errorPhone}</p>}
-                <div style={{ marginTop: "1rem" }}>
-                    {validatedData ? (
-                        <>
-                            <p>
-                                <strong>Validated Telegram Data:</strong>
-                            </p>
-                            <pre>{JSON.stringify(validatedData, null, 2)}</pre>
-                            <p>
-                                <strong>Hash Validated:</strong> {isHashValid ? "true" : "false"}
-                            </p>
-                        </>
-                    ) : (
-                        <p>Error: {telegramError}</p>
-                    )}
-                </div>
             </div>
         </div>
     );

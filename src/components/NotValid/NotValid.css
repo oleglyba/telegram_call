@@ -1,0 +1,23 @@
+@import "../../style/common.css";
+
+.notValid-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+.notValid-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.notfound-container p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #666;
+}
