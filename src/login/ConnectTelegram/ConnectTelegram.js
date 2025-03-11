@@ -1,3 +1,4 @@
+// ConnectTelegram.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
@@ -16,7 +17,7 @@ function ConnectTelegram() {
     const [isLoading, setIsLoading] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
-    const { validatedData, error: telegramError } = useTelegramValidation();
+    const { validatedData, error: telegramError, isHashValid } = useTelegramValidation();
 
     const handleSendCode = async (e) => {
         e.preventDefault();
@@ -128,6 +129,9 @@ function ConnectTelegram() {
                                 <strong>Validated Telegram Data:</strong>
                             </p>
                             <pre>{JSON.stringify(validatedData, null, 2)}</pre>
+                            <p>
+                                <strong>Hash Validated:</strong> {isHashValid ? "true" : "false"}
+                            </p>
                         </>
                     ) : (
                         <p>Error: {telegramError}</p>
