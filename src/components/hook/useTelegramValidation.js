@@ -1,4 +1,3 @@
-// useTelegramValidation.js
 import { useEffect, useState } from "react";
 
 const BOT_TOKEN = process.env.REACT_APP_BOT_TOKEN;
@@ -44,10 +43,12 @@ async function validateTelegramHashAsync(data, botToken) {
 
 export default function useTelegramValidation() {
     const [isHashValid, setIsHashValid] = useState(false);
+    const [isValidationComplete, setIsValidationComplete] = useState(false);
 
     useEffect(() => {
         if (!window.Telegram?.WebApp) {
             setIsHashValid(false);
+            setIsValidationComplete(true);
             return;
         }
         window.Telegram.WebApp.ready();
@@ -55,20 +56,23 @@ export default function useTelegramValidation() {
         const initDataString = window.Telegram.WebApp.initData;
         if (!initDataString) {
             setIsHashValid(false);
+            setIsValidationComplete(true);
             return;
         }
 
         const dataObj = Object.fromEntries(new URLSearchParams(initDataString));
         if (!dataObj.hash || typeof dataObj.hash !== "string") {
             setIsHashValid(false);
+            setIsValidationComplete(true);
             return;
         }
 
         (async () => {
             const valid = await validateTelegramHashAsync(dataObj, BOT_TOKEN);
             setIsHashValid(valid);
+            setIsValidationComplete(true);
         })();
     }, []);
 
-    return { isHashValid };
+    return { isHashValid, isValidationComplete };
 }
