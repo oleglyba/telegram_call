@@ -1,15 +1,17 @@
 import React from "react";
 import "./Congratulations.css";
+import useCountdown from "../hook/useCountdown";
 
 const Congratulations = () => {
     const handleClose = () => {
-        const returnUrl = process.env.REACT_APP_RETURN_BOT_LINK;
         if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.openTelegramLink(returnUrl);
+            window.Telegram.WebApp.close();
         } else {
-            window.location.href = returnUrl;
+            window.close();
         }
     };
+
+    const count = useCountdown(10, handleClose);
 
     return (
         <div className="form-container">
@@ -19,7 +21,7 @@ const Congratulations = () => {
                     You have successfully registered on our web app, now you can use all «Telegram» functions
                 </p>
                 <button className="close-btn" onClick={handleClose}>
-                    Close
+                    This page will be closed {count}
                 </button>
             </div>
         </div>

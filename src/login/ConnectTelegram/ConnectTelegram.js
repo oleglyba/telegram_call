@@ -19,9 +19,6 @@ function ConnectTelegram() {
     const { isHashValid, isValidationComplete } = useTelegramValidation();
 
 
-    useEffect(() => {
-        console.log("API:", apiRequest);
-    }, [apiRequest]);
 
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
