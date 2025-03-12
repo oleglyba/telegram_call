@@ -3,7 +3,12 @@ import "./Congratulations.css";
 
 const Congratulations = () => {
     const handleClose = () => {
-        window.location.href = process.env.REACT_APP_RETURN_BOT_LINK;
+        const returnUrl = process.env.REACT_APP_RETURN_BOT_LINK;
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.openTelegramLink(returnUrl);
+        } else {
+            window.location.href = returnUrl;
+        }
     };
 
     return (
