@@ -18,6 +18,11 @@ function ConnectTelegram() {
     const { apiRequest } = useBackendApi();
     const { isHashValid, isValidationComplete } = useTelegramValidation();
 
+
+    useEffect(() => {
+        console.log("API:", apiRequest);
+    }, [apiRequest]);
+
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
             navigate("/notValid");
