@@ -7,7 +7,7 @@ import "./ConnectTelegram.css";
 import "../../style/common.css";
 import useTelegramValidation from "../../components/hook/useTelegramValidation";
 import useKeyboardStatus from "../../components/hook/useKeyboardStatus";
-import { useCardOffset } from "../../components/hook/useCardOffset"; // шлях до вашого хука
+import { useCardOffset } from "../../components/hook/useCardOffset";
 
 function ConnectTelegram() {
     const navigate = useNavigate();
@@ -22,7 +22,6 @@ function ConnectTelegram() {
     const keyboardHeight = useKeyboardStatus();
 
     const cardRef = useRef(null);
-    // Використовуємо хук, щоб обчислити зсув для картки, де бажаний відступ = 25px
     const offset = useCardOffset(cardRef, keyboardHeight, 25);
 
     useEffect(() => {
@@ -104,7 +103,6 @@ function ConnectTelegram() {
         }
     };
 
-    // Стиль для картки із плавною анімацією підйому
     const cardStyle = {
         transform: `translateY(${offset}px)`,
         transition: "transform 0.3s ease-in-out",
