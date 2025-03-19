@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useBackendApi } from "../../components/api/axiosBackendApi";
@@ -6,8 +6,7 @@ import InputField from "../../components/InputField/InputField";
 import "./ConnectTelegram.css";
 import "../../style/common.css";
 import useTelegramValidation from "../../components/hook/useTelegramValidation";
-import useKeyboardStatus from "../../components/hook/useKeyboardStatus";
-import { useCardOffset } from "../../components/hook/useCardOffset";
+import FormCard from "../../components/FormCard/FormCard";
 
 function ConnectTelegram() {
     const navigate = useNavigate();
@@ -19,10 +18,6 @@ function ConnectTelegram() {
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
     const { isHashValid, isValidationComplete } = useTelegramValidation();
-    const keyboardHeight = useKeyboardStatus();
-
-    const cardRef = useRef(null);
-    const offset = useCardOffset(cardRef, keyboardHeight, 25);
 
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
@@ -103,14 +98,9 @@ function ConnectTelegram() {
         }
     };
 
-    const cardStyle = {
-        transform: `translateY(${offset}px)`,
-        transition: "transform 0.3s ease-in-out",
-    };
-
     return (
         <div className="form-container">
-            <div className="connect-telegram-card" ref={cardRef} style={cardStyle}>
+            <FormCard className="connect-telegram-card">
                 <h2>Connect your Telegram</h2>
                 <p>
                     To proceed, you have to connect your Telegram account via SMS confirmation process.
@@ -141,7 +131,7 @@ function ConnectTelegram() {
                     {isLoading ? "Sending..." : "Send code"}
                 </button>
                 {errorPhone && <p className="error-text">{errorPhone}</p>}
-            </div>
+            </FormCard>
         </div>
     );
 }

@@ -1,10 +1,10 @@
-// ConfirmTelegram.js
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./ConfirmTelegram.css";
 import { useBackendApi } from "../../components/api/axiosBackendApi";
 import InputField from "../../components/InputField/InputField";
 import "../../style/common.css";
+import FormCard from "../../components/FormCard/FormCard";
 
 function ConfirmTelegram() {
     const location = useLocation();
@@ -18,7 +18,8 @@ function ConfirmTelegram() {
 
     const handleGoBack = () => navigate("/connect-telegram");
 
-    const getErrorMessage = (error) => error.response?.data?.detail || error.message;
+    const getErrorMessage = (error) =>
+        error.response?.data?.detail || error.message;
 
     const handleSendCode = async () => {
         setIsLoading(true);
@@ -32,7 +33,8 @@ function ConfirmTelegram() {
 
             if (
                 data?.status === true &&
-                (data?.detail === "Code Sent!" || data?.detail === "Session successfully created")
+                (data?.detail === "Code Sent!" ||
+                    data?.detail === "Session successfully created")
             ) {
                 return navigate("/congratulations");
             }
@@ -50,26 +52,23 @@ function ConfirmTelegram() {
 
     return (
         <div className="form-container">
-            <div className="confirm-telegram-card">
+            <FormCard className="confirm-telegram-card">
                 <h2>Connect your Telegram</h2>
                 <p>
                     We've sent a confirmation code to {phone}. Please enter the code below.
                 </p>
-
                 <InputField
                     type="tel"
                     placeholder="Phone Number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                 />
-
                 <InputField
                     type="text"
                     placeholder="Enter received code"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                 />
-
                 <div className="button-group">
                     <button className="go-back-btn" onClick={handleGoBack} disabled={isLoading}>
                         Go Back
@@ -79,7 +78,7 @@ function ConfirmTelegram() {
                     </button>
                 </div>
                 {errorMessage && <p className="error-text">{errorMessage}</p>}
-            </div>
+            </FormCard>
         </div>
     );
 }

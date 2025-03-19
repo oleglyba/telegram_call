@@ -25,7 +25,6 @@ export const useBackendApi = () => {
                 if (contentType.includes("application/json")) {
                     json = await response.json();
                 } else {
-                    console.error("Невірний формат відповіді від сервера.");
                     throw new Error("Server error. Please try again later.");
                 }
 
@@ -36,8 +35,7 @@ export const useBackendApi = () => {
                 return json;
             } catch (err) {
                 if (err.message === "Failed to fetch") {
-                    console.error("Мережева помилка: не вдалося виконати запит");
-                    setError("Не вдалося підключитися до сервера. Будь ласка, спробуйте пізніше.");
+                    setError("Unable to connect to the server. Please try again later.");
                 } else {
                     setError(err.message);
                 }

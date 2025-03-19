@@ -4,6 +4,7 @@ import { useBackendApi } from "../../components/api/axiosBackendApi";
 import InputField from "../../components/InputField/InputField";
 import "./Password.css";
 import "../../style/common.css";
+import FormCard from "../../components/FormCard/FormCard";
 
 function Password() {
     const location = useLocation();
@@ -15,6 +16,7 @@ function Password() {
     const [errorMessage, setErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { apiRequest } = useBackendApi();
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -52,17 +54,15 @@ function Password() {
 
     return (
         <div className="form-container">
-            <div className="password-card">
+            <FormCard className="password-card">
                 <h2>Connect Telegram</h2>
                 <p>Please enter your phone number and password below</p>
-
                 <InputField
                     type="tel"
                     placeholder="Phone Number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                 />
-
                 <InputField
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
@@ -71,16 +71,14 @@ function Password() {
                     showPassword={showPassword}
                     togglePasswordVisibility={togglePasswordVisibility}
                 />
-
                 <div className="button-group">
                     <button className="send-btn" onClick={handleConfirm} disabled={isLoading}>
                         {isLoading ? "Processing..." : "Confirm"}
                     </button>
                 </div>
-
                 {responseMessage && <p>{responseMessage}</p>}
                 {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-            </div>
+            </FormCard>
         </div>
     );
 }

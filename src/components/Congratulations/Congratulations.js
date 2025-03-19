@@ -20,7 +20,7 @@ const Congratulations = () => {
                 <p>
                     You have successfully registered on our web app, now you can use all «Telegram» functions
                 </p>
-                <button className="clos e-btn" onClick={handleClose}>
+                <button className="close-btn" onClick={handleClose}>
                     This page will be closed {count}
                 </button>
             </div>
