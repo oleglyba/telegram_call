@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useBackendApi } from "../../components/api/axiosBackendApi";
@@ -7,6 +7,7 @@ import "./ConnectTelegram.css";
 import "../../style/common.css";
 import useTelegramValidation from "../../components/hook/useTelegramValidation";
 import useKeyboardStatus from "../../components/hook/useKeyboardStatus";
+import { useCardOffset } from "../../components/hook/useCardOffset"; // шлях до вашого хука
 
 function ConnectTelegram() {
     const navigate = useNavigate();
@@ -20,15 +21,9 @@ function ConnectTelegram() {
     const { isHashValid, isValidationComplete } = useTelegramValidation();
     const keyboardHeight = useKeyboardStatus();
 
-    // Використовуємо ref для вимірювання висоти картки
     const cardRef = useRef(null);
-    const [cardHeight, setCardHeight] = useState(0);
-
-    useEffect(() => {
-        if (cardRef.current) {
-            setCardHeight(cardRef.current.offsetHeight);
-        }
-    }, [keyboardHeight]);
+    // Використовуємо хук, щоб обчислити зсув для картки, де бажаний відступ = 25px
+    const offset = useCardOffset(cardRef, keyboardHeight, 25);
 
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
@@ -109,17 +104,11 @@ function ConnectTelegram() {
         }
     };
 
-    // Якщо клавіатура відкрита (keyboardHeight > 10) та висота картки відома,
-    // обчислюємо зсув так, щоб нижня межа картки була 10px вище від клавіатури.
-    let offset = 0;
-    if (keyboardHeight > 10 && cardHeight) {
-        const desiredBottom = window.innerHeight - keyboardHeight - 10;
-        const currentBottom = window.innerHeight / 2 + cardHeight / 2;
-        offset = desiredBottom - currentBottom;
-    }
-
-    // Стиль для картки з коригуванням за допомогою translateY
-    const cardStyle = { transform: `translateY(${offset}px)` };
+    // Стиль для картки із плавною анімацією підйому
+    const cardStyle = {
+        transform: `translateY(${offset}px)`,
+        transition: "transform 0.3s ease-in-out",
+    };
 
     return (
         <div className="form-container">
