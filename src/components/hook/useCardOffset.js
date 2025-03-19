@@ -6,9 +6,7 @@ export function useCardOffset(cardRef, keyboardHeight, desiredMargin = 25) {
     useEffect(() => {
         if (cardRef.current && keyboardHeight > desiredMargin) {
             const rect = cardRef.current.getBoundingClientRect();
-            // Поточна позиція нижньої межі картки
             const currentBottom = rect.bottom;
-            // Бажана позиція – 25px вище верхньої межі клавіатури
             const desiredBottom = window.innerHeight - keyboardHeight - desiredMargin;
             setOffset(desiredBottom - currentBottom);
         } else {

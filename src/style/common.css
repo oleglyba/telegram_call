@@ -1,9 +1,6 @@
 /* common.css */
 .form-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 96.5vh;
     padding: 1rem;
 }
 
@@ -22,7 +19,6 @@
     animation: spin 2s linear infinite;
     margin-bottom: 10px;
 }
-
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
