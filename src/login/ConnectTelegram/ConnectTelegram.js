@@ -6,6 +6,7 @@ import InputField from "../../components/InputField/InputField";
 import "./ConnectTelegram.css";
 import "../../style/common.css";
 import useTelegramValidation from "../../components/hook/useTelegramValidation";
+import useKeyboardStatus from "../../components/hook/useKeyboardStatus";
 
 function ConnectTelegram() {
     const navigate = useNavigate();
@@ -17,8 +18,7 @@ function ConnectTelegram() {
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
     const { isHashValid, isValidationComplete } = useTelegramValidation();
-
-
+    const isKeyboardOpen = useKeyboardStatus();
 
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
@@ -100,7 +100,7 @@ function ConnectTelegram() {
     };
 
     return (
-        <div className="form-container">
+        <div className={`form-container ${isKeyboardOpen ? "keyboard-open" : ""}`}>
             <div className="connect-telegram-card">
                 <h2>Connect your Telegram</h2>
                 <p>
