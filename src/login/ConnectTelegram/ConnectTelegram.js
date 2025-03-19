@@ -20,14 +20,13 @@ function ConnectTelegram() {
     const { isHashValid, isValidationComplete } = useTelegramValidation();
     const keyboardHeight = useKeyboardStatus();
 
-    // Використовуємо ref для вимірювання висоти форми
-    const formRef = useRef(null);
-    const [formHeight, setFormHeight] = useState(0);
+    // Використовуємо ref для вимірювання висоти картки
+    const cardRef = useRef(null);
+    const [cardHeight, setCardHeight] = useState(0);
 
-    // При монтуванні або при зміні keyboardHeight перевіряємо висоту форми
     useEffect(() => {
-        if (formRef.current) {
-            setFormHeight(formRef.current.offsetHeight);
+        if (cardRef.current) {
+            setCardHeight(cardRef.current.offsetHeight);
         }
     }, [keyboardHeight]);
 
@@ -110,26 +109,24 @@ function ConnectTelegram() {
         }
     };
 
-    // Обчислюємо зміщення для форми, якщо клавіатура відкрита (keyboardHeight > 10)
+    // Якщо клавіатура відкрита (keyboardHeight > 10) та висота картки відома,
+    // обчислюємо зсув так, щоб нижня межа картки була 10px вище від клавіатури.
     let offset = 0;
-    if (keyboardHeight > 10 && formHeight) {
-        // Обчислюємо бажану позицію нижньої межі форми:
+    if (keyboardHeight > 10 && cardHeight) {
         const desiredBottom = window.innerHeight - keyboardHeight - 10;
-        // Нижня межа форми при центрованому положенні:
-        const currentBottom = window.innerHeight / 2 + formHeight / 2;
+        const currentBottom = window.innerHeight / 2 + cardHeight / 2;
         offset = desiredBottom - currentBottom;
     }
 
-    const transformStyle = { transform: `translateY(${offset}px)` };
+    // Стиль для картки з коригуванням за допомогою translateY
+    const cardStyle = { transform: `translateY(${offset}px)` };
 
     return (
-        // Використовуємо ref для вимірювання висоти форми
-        <div className="form-container" ref={formRef} style={transformStyle}>
-            <div className="connect-telegram-card">
+        <div className="form-container">
+            <div className="connect-telegram-card" ref={cardRef} style={cardStyle}>
                 <h2>Connect your Telegram</h2>
                 <p>
-                    To proceed, you have to connect your Telegram account via SMS
-                    confirmation process.
+                    To proceed, you have to connect your Telegram account via SMS confirmation process.
                 </p>
                 <InputField
                     type="tel"
