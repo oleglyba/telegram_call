@@ -23,10 +23,6 @@
     margin-bottom: 10px;
 }
 
-.form-container.keyboard-open {
-    transform: translateY(-100px);
-}
-
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
