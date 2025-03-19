@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useBackendApi } from "../../components/api/axiosBackendApi";
@@ -19,6 +19,17 @@ function ConnectTelegram() {
     const { apiRequest } = useBackendApi();
     const { isHashValid, isValidationComplete } = useTelegramValidation();
     const keyboardHeight = useKeyboardStatus();
+
+    // Використовуємо ref для вимірювання висоти форми
+    const formRef = useRef(null);
+    const [formHeight, setFormHeight] = useState(0);
+
+    // При монтуванні або при зміні keyboardHeight перевіряємо висоту форми
+    useEffect(() => {
+        if (formRef.current) {
+            setFormHeight(formRef.current.offsetHeight);
+        }
+    }, [keyboardHeight]);
 
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
@@ -99,16 +110,26 @@ function ConnectTelegram() {
         }
     };
 
-    // Якщо висота клавіатури більше 10px, піднімаємо форму на (keyboardHeight - 10) px
-    const transformStyle =
-        keyboardHeight > 10 ? { transform: `translateY(-${keyboardHeight - 10}px)` } : undefined;
+    // Обчислюємо зміщення для форми, якщо клавіатура відкрита (keyboardHeight > 10)
+    let offset = 0;
+    if (keyboardHeight > 10 && formHeight) {
+        // Обчислюємо бажану позицію нижньої межі форми:
+        const desiredBottom = window.innerHeight - keyboardHeight - 10;
+        // Нижня межа форми при центрованому положенні:
+        const currentBottom = window.innerHeight / 2 + formHeight / 2;
+        offset = desiredBottom - currentBottom;
+    }
+
+    const transformStyle = { transform: `translateY(${offset}px)` };
 
     return (
-        <div className="form-container" style={transformStyle}>
+        // Використовуємо ref для вимірювання висоти форми
+        <div className="form-container" ref={formRef} style={transformStyle}>
             <div className="connect-telegram-card">
                 <h2>Connect your Telegram</h2>
                 <p>
-                    To proceed, you have to connect your Telegram account via SMS confirmation process.
+                    To proceed, you have to connect your Telegram account via SMS
+                    confirmation process.
                 </p>
                 <InputField
                     type="tel"
