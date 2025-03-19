@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import useKeyboardStatus from "../../components/hook/useKeyboardStatus";
 import {useCardOffset} from "../hook/useCardOffset";
 
-const FormCard = ({ children, className, offsetPadding = 25 }) => {
+const FormCard = ({ children, className, offsetPadding = 20 }) => {
     const cardRef = useRef(null);
     const keyboardHeight = useKeyboardStatus();
     const offset = useCardOffset(cardRef, keyboardHeight, offsetPadding);
