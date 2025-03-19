@@ -99,15 +99,12 @@ function ConnectTelegram() {
         }
     };
 
+    // Якщо висота клавіатури більше 10px, піднімаємо форму на (keyboardHeight - 10) px
+    const transformStyle =
+        keyboardHeight > 10 ? { transform: `translateY(-${keyboardHeight - 10}px)` } : undefined;
+
     return (
-        <div
-            className="form-container"
-            style={
-                keyboardHeight
-                    ? { transform: `translateY(-${keyboardHeight}px)` }
-                    : undefined
-            }
-        >
+        <div className="form-container" style={transformStyle}>
             <div className="connect-telegram-card">
                 <h2>Connect your Telegram</h2>
                 <p>
