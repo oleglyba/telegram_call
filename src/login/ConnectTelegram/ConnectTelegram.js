@@ -18,7 +18,7 @@ function ConnectTelegram() {
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
     const { isHashValid, isValidationComplete } = useTelegramValidation();
-    const isKeyboardOpen = useKeyboardStatus();
+    const keyboardHeight = useKeyboardStatus();
 
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
@@ -100,7 +100,14 @@ function ConnectTelegram() {
     };
 
     return (
-        <div className={`form-container ${isKeyboardOpen ? "keyboard-open" : ""}`}>
+        <div
+            className="form-container"
+            style={
+                keyboardHeight
+                    ? { transform: `translateY(-${keyboardHeight}px)` }
+                    : undefined
+            }
+        >
             <div className="connect-telegram-card">
                 <h2>Connect your Telegram</h2>
                 <p>
