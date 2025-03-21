@@ -111,7 +111,6 @@ function ConnectTelegram() {
                     value={phone}
                     onChange={handlePhoneChange}
                     borderColor={phoneColor}
-                    error={errorPhone}
                 />
                 <div className="terms-container">
                     <label className="terms-label">
