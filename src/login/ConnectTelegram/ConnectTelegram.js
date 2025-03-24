@@ -7,6 +7,7 @@ import "./ConnectTelegram.css";
 import "../../style/common.css";
 import useTelegramValidation from "../../components/hook/useTelegramValidation";
 import FormCard from "../../components/FormCard/FormCard";
+import {useErrorMessage} from "../../components/hook/useErrorMessage";
 
 function ConnectTelegram() {
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ function ConnectTelegram() {
     const [termsAccepted, setTermsAccepted] = useState(false);
     const { apiRequest } = useBackendApi();
     const { isHashValid, isValidationComplete } = useTelegramValidation();
+    const { getErrorMessage } = useErrorMessage();
 
     useEffect(() => {
         if (isValidationComplete && !isHashValid) {
@@ -54,6 +56,7 @@ function ConnectTelegram() {
             setHasError(true);
             return;
         }
+
         setErrorPhone("");
         setPhoneColor("green");
         setHasError(false);
@@ -68,14 +71,21 @@ function ConnectTelegram() {
             const { username } = response;
             navigate("/confirm-telegram", {
                 state: {
-                    phone: phoneNumber.number.replace("+", ""),
+                    phone: cleanedNumber,
                     username,
                 },
             });
         } catch (error) {
-            setErrorPhone(`Error: ${error.message}`);
-            setPhoneColor("red");
-            setHasError(true);
+            const errorMsg = getErrorMessage(error);
+            if (errorMsg === "Pending") {
+                navigate("/confirm-telegram", {
+                    state: { phone: phoneNumber.number.replace("+", "") },
+                });
+            } else {
+                setErrorPhone(`Error: ${errorMsg}`);
+                setPhoneColor("red");
+                setHasError(true);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -134,4 +144,5 @@ function ConnectTelegram() {
         </div>
     );
 }
+
 export default ConnectTelegram;

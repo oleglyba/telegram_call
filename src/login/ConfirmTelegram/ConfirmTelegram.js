@@ -5,6 +5,7 @@ import { useBackendApi } from "../../components/api/axiosBackendApi";
 import InputField from "../../components/InputField/InputField";
 import "../../style/common.css";
 import FormCard from "../../components/FormCard/FormCard";
+import {useErrorMessage} from "../../components/hook/useErrorMessage";
 
 function ConfirmTelegram() {
     const location = useLocation();
@@ -15,11 +16,9 @@ function ConfirmTelegram() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const { apiRequest } = useBackendApi();
+    const { getErrorMessage } = useErrorMessage();
 
     const handleGoBack = () => navigate("/connect-telegram");
-
-    const getErrorMessage = (error) =>
-        error.response?.data?.detail || error.message;
 
     const handleSendCode = async () => {
         setIsLoading(true);
